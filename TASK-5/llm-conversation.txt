@@ -1,0 +1,141 @@
+Akıllı Ev Güvenlik Sistemi Pseudocode'u
+Aşağıdaki pseudocode, 7/24 çalışan bir akıllı ev güvenlik sisteminin temel mantığını sonsuz bir döngü içinde göstermektedir.
+BAŞLA
+
+  // Sistem değişkenlerini başlangıç durumuna getir
+  ALARM_DURUMU = "PASİF"
+
+  // Ana döngü sistem çalıştığı sürece sürekli devam eder
+  DÖNGÜ (DOĞRU)
+
+    // 1. ADIM: Sensör Verilerini Oku
+    // Her döngüde tüm sensörler kontrol edilir
+    hareket_algilandi = hareketSensörünüOku()
+    kapi_pencere_acik = kapiPencereSensörünüOku()
+    kamera_goruntusu = kamerayiOku()
+    alarm_sifirlama_istegi = alarmSifirlamaKomutunuKontrolEt()
+
+    // Alarm sıfırlama komutu geldiyse alarmı kapat ve döngüye baştan başla
+    EĞER (alarm_sifirlama_istegi == EVET VE ALARM_DURUMU == "AKTİF")
+      alarmıSustur()
+      ALARM_DURUMU = "PASİF"
+      kullaniciyaBildirimGonder("Sistem alarmı kullanıcı tarafından sıfırlandı.")
+      DEVAM ET // Döngünün bu adımını sonlandır ve başa dön
+    SON_EĞER
+
+    // Alarm aktif değilse tehdit kontrolü yap
+    EĞER (ALARM_DURUMU == "PASİF")
+    
+      // 2. ADIM: Tehdit Algılama ve Seviyelendirme
+      tehdit_seviyesi = "YOK"
+
+      EĞER (kapi_pencere_acik == EVET)
+        tehdit_seviyesi = "YÜKSEK"
+      YOKSA EĞER (hareket_algilandi == EVET)
+        tehdit_seviyesi = "ORTA"
+      YOKSA EĞER (kamera_goruntusu icinde supheli_nesne_var)
+        tehdit_seviyesi = "DÜŞÜK"
+      SON_EĞER
+
+
+      // 3. ADIM: Tehdit Seviyesine Göre Aksiyon Al
+      EĞER (tehdit_seviyesi == "YÜKSEK")
+        // Alarm çal ve en üst seviye bildirim gönder
+        ALARM_DURUMU = "AKTİF"
+        yüksekSesliAlarmCal()
+        kullaniciyaBildirimGonder("ACİL: Kapı/Pencere izinsiz açıldı!")
+        poliseHaberVer() // Opsiyonel
+
+      YOKSA EĞER (tehdit_seviyesi == "ORTA")
+        // Alarm çal ve uyarı bildirimi gönder
+        ALARM_DURUMU = "AKTİF"
+        ortaSesliAlarmCal()
+        kullaniciyaBildirimGonder("UYARI: Ev içinde hareket algılandı!")
+
+      YOKSA EĞER (tehdit_seviyesi == "DÜŞÜK")
+        // Sadece kullanıcıyı bilgilendir, alarm çalma
+        kullaniciyaBildirimGonder("BİLGİ: Kamera şüpheli bir nesne gördü.")
+        olayinVideosunuKaydet()
+        
+      SON_EĞER
+
+    SON_EĞER
+    
+    // Sistem kaynaklarını verimli kullanmak için döngüler arasında kısa bir bekleme ekle
+    bekle(1 saniye)
+
+  SON_DÖNGÜ
+
+SON
+Açıklama:
+•	Sonsuz Döngü: DÖNGÜ (DOĞRU) ifadesi, programın sürekli çalışmasını sağlar. Bu, 7/24 aktif olması gereken güvenlik sistemleri için temel bir yaklaşımdır.
+•	Sensör Okuma: Her döngünün başında hareket, kapı/pencere gibi tüm sensörlerden anlık veriler okunur.
+•	Tehdit Değerlendirme: Gelen verilere göre bir tehdit olup olmadığı ve varsa bu tehdidin seviyesi (YÜKSEK, ORTA, DÜŞÜK) belirlenir.
+•	Farklı Aksiyonlar: Tehdit seviyesine göre farklı eylemler tetiklenir. Örneğin, "YÜKSEK" seviyeli bir tehdit (kapının açılması) hem alarmı çalar hem de acil bildirim gönderirken, "DÜŞÜK" seviyeli bir tehdit sadece kullanıcıyı bilgilendirebilir.
+•	Alarm Sıfırlama: Döngü, alarmSifirlamaKomutunuKontrolEt() fonksiyonu ile bir sıfırlama komutu gelip gelmediğini sürekli denetler. Komut geldiğinde alarm susturulur ve sistem normal izleme moduna döner. Bu durum, "Alarm sıfırlama komutu gelene kadar devam eder" şartını karşılar.
+bu psuedocode'yi dot formatına çevir 
+Düşünme sürecini göster
+Elbette, bir önceki adımda oluşturulan pseudocode'un DOT dili formatındaki akış diyagramı (flowchart) kodunu aşağıda bulabilirsiniz.
+Bu DOT kodu, Graphviz gibi bir araç kullanılarak görsel bir diyagrama dönüştürülebilir. Kod, görevde belirtilen "geri ok kullanımı" ve "Sürekli" etiketi ile sonsuz döngüyü açıkça göstermektedir.
+DOT Formatındaki Akış Diyagramı Kodu
+Kod snippet'i
+digraph AkilliEvGuvenlikSistemi {
+    // Grafik ayarları
+    graph [fontname="Helvetica", fontsize=12, labelloc="t", label="Akıllı Ev Güvenlik Sistemi Akış Diyagramı"];
+    node [fontname="Helvetica", fontsize=10, style=filled];
+    edge [fontname="Helvetica", fontsize=9];
+
+    // Düğüm (Node) Tanımlamaları
+    start [label="Başla", shape=ellipse, fillcolor=limegreen];
+    init [label="Değişkenleri Başlat\nALARM_DURUMU = 'PASİF'", shape=box, fillcolor=lightblue];
+    read_sensors [label="1. Tüm Sensörleri Oku\n(Hareket, Kapı, Kamera, Sıfırlama)", shape=box, fillcolor=lightblue];
+    check_reset [label="Alarm Sıfırlama Komutu Var Mı?", shape=diamond, fillcolor=khaki];
+    reset_alarm [label="Alarmı Sustur\nDurumu 'PASİF' Yap\nKullanıcıya Bildirim Gönder", shape=box, fillcolor=lightcoral];
+    check_alarm_passive [label="ALARM_DURUMU 'PASİF' Mi?", shape=diamond, fillcolor=khaki];
+    detect_threat [label="2. Tehdit Algıla ve Seviye Belirle", shape=box, fillcolor=lightblue];
+    check_threat_level [label="3. Tehdit Seviyesi Nedir?", shape=diamond, fillcolor=khaki];
+    
+    action_high [label="YÜKSEK TEHDİT AKSİYONU\n- Alarmı Çal\n- Acil Bildirim Gönder\n- Durumu 'AKTİF' Yap", shape=box, fillcolor=red, fontcolor=white];
+    action_medium [label="ORTA TEHDİT AKSİYONU\n- Alarmı Çal\n- Uyarı Bildirimi Gönder\n- Durumu 'AKTİF' Yap", shape=box, fillcolor=orange];
+    action_low [label="DÜŞÜK TEHDİT AKSİYONU\n- Bilgi Bildirimi Gönder\n- Video Kaydet", shape=box, fillcolor=lightgoldenrodyellow];
+    
+    wait [label="Kısa Bir Süre Bekle", shape=box, fillcolor=lightgrey];
+
+    // Akış Bağlantıları (Edges)
+    start -> init;
+    init -> read_sensors;
+
+    // Döngü içi akış
+    read_sensors -> check_reset;
+    check_reset -> reset_alarm [label="Evet"];
+    check_reset -> check_alarm_passive [label="Hayır"];
+    
+    reset_alarm -> wait;
+    
+    check_alarm_passive -> detect_threat [label="Evet"];
+    check_alarm_passive -> wait [label="Hayır (Zaten Aktif)"];
+    
+    detect_threat -> check_threat_level;
+    
+    check_threat_level -> action_high [label="Yüksek"];
+    check_threat_level -> action_medium [label="Orta"];
+    check_threat_level -> action_low [label="Düşük"];
+    check_threat_level -> wait [label="Yok"];
+    
+    action_high -> wait;
+    action_medium -> wait;
+    action_low -> wait;
+    
+    // Sonsuz Döngüyü oluşturan geri ok ve etiket
+    wait -> read_sensors [label="Sürekli", style=dashed, color=blue, arrowhead=normal];
+}
+Kodun Açıklaması ve Görselleştirilmesi
+•	digraph: Bu, yönlendirilmiş bir grafik (directed graph) oluşturulacağını belirtir, yani okların yönü vardır.
+•	Düğüm Şekilleri (shape):
+o	ellipse: Başlangıç ve bitiş noktaları için kullanılır.
+o	box: İşlem veya eylem adımlarını temsil eder (örn: "Sensörleri Oku").
+o	diamond: Karar verme noktalarını temsil eder (örn: "Tehdit Seviyesi Nedir?").
+•	Renkler (fillcolor): Farklı işlem türlerini ayırt etmeyi kolaylaştırmak için kullanılmıştır. Kırmızı ve turuncu gibi renkler acil durumları vurgular.
+•	Bağlantılar (->): Programın akış yönünü gösteren oklardır.
+•	Sonsuz Döngü: wait düğümünden read_sensors düğümüne geri dönen kesikli mavi ok (style=dashed, color=blue), sistemin bir döngüyü tamamladıktan sonra tekrar başa döndüğünü gösterir. Görevde istendiği gibi bu oka "Sürekli" etiketi eklenmiştir.
+
