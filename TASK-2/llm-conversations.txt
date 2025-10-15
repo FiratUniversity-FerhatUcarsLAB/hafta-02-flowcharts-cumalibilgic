@@ -1,0 +1,255 @@
+“E-ticaret sitesinde sepet yönetimi ve ödeme sistemini adım adım açıkla. Kullanıcı girişi, ürün ekleme, stok kontrolü, indirim kodu, kargo hesaplama ve ödeme aşamalarını içermeli.”
+Elbette! İşte bir e-ticaret sitesinde sepet yönetimi ve ödeme sistemi sürecinin adım adım açıklaması:
+
+🧑‍💻 1. Kullanıcı Girişi (Authentication)
+Kullanıcılar siteye giriş yapar veya yeni hesap oluşturur.
+
+Giriş işlemi genellikle e-posta/şifre veya sosyal medya hesaplarıyla yapılır.
+
+Giriş yapan kullanıcıya özel sepet ve sipariş geçmişi tutulur.
+
+🛒 2. Ürün Ekleme ve Sepet Yönetimi
+Kullanıcı, ürünleri kategori veya arama yoluyla bulur.
+
+Ürün detay sayfasında “Sepete Ekle” butonuyla ürün sepete eklenir.
+
+Sepet sayfasında:
+
+Ürün adedi artırılıp azaltılabilir.
+
+Ürün çıkarılabilir.
+
+Toplam tutar anlık olarak güncellenir.
+
+📦 3. Stok Kontrolü
+Ürün sepete eklenmeden önce stok durumu kontrol edilir.
+
+Gerçek zamanlı stok takibi yapılır.
+
+Stokta olmayan ürünler sepete eklenemez veya “Tükendi” olarak işaretlenir.
+
+🎟️ 4. İndirim Kodu Uygulama
+Kullanıcı, ödeme öncesinde indirim kuponu girebilir.
+
+Kod geçerliyse:
+
+Belirli bir yüzde veya sabit tutarda indirim uygulanır.
+
+Toplam tutar yeniden hesaplanır.
+
+Kod geçersizse kullanıcı bilgilendirilir.
+
+🚚 5. Kargo Hesaplama
+Kullanıcının teslimat adresine göre kargo ücreti hesaplanır.
+
+Kargo seçenekleri (standart, ekspres, aynı gün) sunulur.
+
+Bazı durumlarda belirli tutarın üzerindeki alışverişlerde kargo ücretsiz olabilir.
+
+💳 6. Ödeme Aşaması
+Kullanıcı ödeme sayfasına yönlendirilir.
+
+Ödeme yöntemleri:
+
+Kredi/banka kartı
+
+Kapıda ödeme
+
+Dijital cüzdanlar (ör. Apple Pay, Google Pay)
+
+Kart bilgileri güvenli ödeme altyapısıyla (ör. 3D Secure) işlenir.
+
+Ödeme başarılıysa sipariş oluşturulur ve kullanıcıya onay e-postası gönderilir.
+
+✅ 7. Sipariş Tamamlandı
+Sipariş durumu “Hazırlanıyor” olarak işaretlenir.
+
+Kullanıcı, siparişini “Hesabım > Siparişlerim” bölümünden takip edebilir.
+
+Kargo takip numarası sağlanır.
+
+İstersen bu süreci bir akış diyagramı veya kullanıcı arayüzü tasarımıyla da görselleştirebiliriz. Hangisini istersin?
+
+Bu sistemi pseudocode olarak yaz. Döngüler için DONGU, koşullar için EGER-ISE kullan. Her adımı BAŞLA ile başlat, BITIR ile bitir. TÜm kontrol noktalarını belirt.
+İşte e-ticaret sitesinde sepet yönetimi ve ödeme sisteminin adım adım pseudocode (sözde kod) ile yazılmış hali:
+
+plaintext
+BAŞLA KullanıcıGirişi
+    EGER kullanıcı_giriş_yaptı ISE
+        kullanıcı_sepeti = yeni_sepet()
+    DEĞİLSE
+        yönlendir("Giriş veya Kayıt Sayfası")
+BITIR KullanıcıGirişi
+
+BAŞLA ÜrünEkleme
+    ürün = seçilen_ürün()
+    EGER ürün.stok > 0 ISE
+        kullanıcı_sepeti.ekle(ürün)
+    DEĞİLSE
+        göster("Ürün stokta yok")
+BITIR ÜrünEkleme
+
+BAŞLA SepetYönetimi
+    DONGU ürün IN kullanıcı_sepeti
+        göster(ürün.ad, ürün.adet, ürün.fiyat)
+        EGER kullanıcı_adet_değiştirirse ISE
+            ürün.adet = yeni_adet
+        EGER kullanıcı_ürün_silerse ISE
+            kullanıcı_sepeti.sil(ürün)
+    BITIR DONGU
+    toplam_tutar = kullanıcı_sepeti.hesapla_toplam()
+BITIR SepetYönetimi
+
+BAŞLA İndirimKoduUygulama
+    EGER kullanıcı_indirim_kodu_girerse ISE
+        EGER kod.geçerli_mi() ISE
+            indirim = kod.hesapla_indirim(toplam_tutar)
+            toplam_tutar = toplam_tutar - indirim
+        DEĞİLSE
+            göster("Kod geçersiz")
+BITIR İndirimKoduUygulama
+
+BAŞLA KargoHesaplama
+    adres = kullanıcı_adresi()
+    kargo_seçenekleri = hesapla_kargo(adres, kullanıcı_sepeti)
+    göster(kargo_seçenekleri)
+    seçilen_kargo = kullanıcı_seçimi()
+    toplam_tutar += seçilen_kargo.ucret
+BITIR KargoHesaplama
+
+BAŞLA ÖdemeAşaması
+    göster("Toplam Tutar: " + toplam_tutar)
+    ödeme_yöntemi = kullanıcı_seçimi()
+    EGER ödeme_yöntemi == "Kredi Kartı" ISE
+        kart_bilgileri = kullanıcı_girişi()
+        EGER kart_bilgileri.geçerli_mi() ISE
+            işlem = ödeme_sistemi.kartla_öde(kart_bilgileri, toplam_tutar)
+        DEĞİLSE
+            göster("Kart bilgileri geçersiz")
+    EGER işlem.basarili_mi() ISE
+        sipariş_oluştur(kullanıcı_sepeti, adres, seçilen_kargo)
+        gönder_onay_maili()
+    DEĞİLSE
+        göster("Ödeme başarısız")
+BITIR ÖdemeAşaması
+
+BAŞLA SiparişTakibi
+    sipariş_durumu = "Hazırlanıyor"
+    göster("Siparişiniz alındı. Durum: " + sipariş_durumu)
+    kargo_takip = oluştur_kargo_takip()
+    göster("Kargo Takip No: " + kargo_takip)
+BITIR SiparişTakibi
+Bu yapı, tüm süreci modüler ve kontrol noktalarıyla birlikte tanımlar. İstersen bunu bir akış diyagramına veya gerçek kod yapısına dönüştürebiliriz. Hangisini istersin?
+
+Pseudocode’u Graphviz DOT formatına çevir. rankdir=TB kullan. Karar noktalarında EVET/HAYIR etiketlerini unutma.
+İşte e-ticaret sepet ve ödeme sistemine ait pseudocode’un Graphviz DOT formatına çevrilmiş hali. Bu diyagramda rankdir=TB kullanılmıştır ve tüm karar noktaları EVET/HAYIR etiketleriyle belirtilmiştir:
+
+dot
+digraph E_Ticaret_Sepet_Odeme {
+    rankdir=TB;
+    node [shape=box, style=filled, fillcolor=lightgray];
+
+    KullaniciGirisi [label="BAŞLA: Kullanıcı Girişi"];
+    GirisKontrol [label="EGER kullanıcı giriş yaptı"];
+    SepetOlustur [label="Yeni sepet oluştur"];
+    YonlendirGiris [label="Giriş/Kayıt sayfasına yönlendir"];
+    BitirGiris [label="BITIR: Kullanıcı Girişi"];
+
+    UrunEkleme [label="BAŞLA: Ürün Ekleme"];
+    StokKontrol [label="EGER ürün stok > 0"];
+    SepeteEkle [label="Ürünü sepete ekle"];
+    StokYok [label="Göster: Ürün stokta yok"];
+    BitirEkleme [label="BITIR: Ürün Ekleme"];
+
+    SepetYonetimi [label="BAŞLA: Sepet Yönetimi"];
+    DonguSepet [label="DONGU: Sepetteki ürünler"];
+    AdetDegisimi [label="EGER kullanıcı adet değiştirirse"];
+    AdetGuncelle [label="Adeti güncelle"];
+    UrunSilme [label="EGER kullanıcı ürün silerse"];
+    UrunSil [label="Ürünü sepetten sil"];
+    ToplamHesapla [label="Toplam tutarı hesapla"];
+    BitirSepet [label="BITIR: Sepet Yönetimi"];
+
+    IndirimKodu [label="BAŞLA: İndirim Kodu"];
+    KodGirildi [label="EGER kullanıcı indirim kodu girerse"];
+    KodGecerli [label="EGER kod geçerli"];
+    IndirimUygula [label="İndirim hesapla ve uygula"];
+    KodGecersiz [label="Göster: Kod geçersiz"];
+    BitirIndirim [label="BITIR: İndirim Kodu"];
+
+    KargoHesaplama [label="BAŞLA: Kargo Hesaplama"];
+    AdresAl [label="Teslimat adresini al"];
+    KargoSecenekleri [label="Kargo seçeneklerini hesapla"];
+    KargoSecimi [label="Kullanıcı kargo seçimi"];
+    KargoEkle [label="Kargo ücretini toplam tutara ekle"];
+    BitirKargo [label="BITIR: Kargo Hesaplama"];
+
+    OdemeAsamasi [label="BAŞLA: Ödeme Aşaması"];
+    OdemeYontemi [label="Kullanıcı ödeme yöntemi seçimi"];
+    KartBilgisi [label="EGER kredi kartı seçildiyse"];
+    KartGecerli [label="EGER kart bilgileri geçerli"];
+    KartOdeme [label="Kartla ödeme işlemi"];
+    KartHatali [label="Göster: Kart bilgileri geçersiz"];
+    OdemeBasarili [label="EGER ödeme başarılı"];
+    SiparisOlustur [label="Sipariş oluştur"];
+    OnayMail [label="Onay e-postası gönder"];
+    OdemeBasarisiz [label="Göster: Ödeme başarısız"];
+    BitirOdeme [label="BITIR: Ödeme Aşaması"];
+
+    SiparisTakip [label="BAŞLA: Sipariş Takibi"];
+    DurumHazirlaniyor [label="Sipariş durumu: Hazırlanıyor"];
+    KargoTakip [label="Kargo takip numarası oluştur"];
+    BitirTakip [label="BITIR: Sipariş Takibi"];
+
+    // Bağlantılar
+    KullaniciGirisi -> GirisKontrol;
+    GirisKontrol -> SepetOlustur [label="EVET"];
+    GirisKontrol -> YonlendirGiris [label="HAYIR"];
+    SepetOlustur -> BitirGiris;
+    YonlendirGiris -> BitirGiris;
+
+    BitirGiris -> UrunEkleme;
+    UrunEkleme -> StokKontrol;
+    StokKontrol -> SepeteEkle [label="EVET"];
+    StokKontrol -> StokYok [label="HAYIR"];
+    SepeteEkle -> BitirEkleme;
+    StokYok -> BitirEkleme;
+
+    BitirEkleme -> SepetYonetimi;
+    SepetYonetimi -> DonguSepet;
+    DonguSepet -> AdetDegisimi;
+    AdetDegisimi -> AdetGuncelle [label="EVET"];
+    AdetDegisimi -> UrunSilme [label="HAYIR"];
+    UrunSilme -> UrunSil [label="EVET"];
+    UrunSilme -> ToplamHesapla [label="HAYIR"];
+    UrunSil -> ToplamHesapla;
+    AdetGuncelle -> UrunSilme;
+    ToplamHesapla -> BitirSepet;
+
+    BitirSepet -> IndirimKodu;
+    IndirimKodu -> KodGirildi;
+    KodGirildi -> KodGecerli [label="EVET"];
+    KodGirildi -> BitirIndirim [label="HAYIR"];
+    KodGecerli -> IndirimUygula [label="EVET"];
+    KodGecerli -> KodGecersiz [label="HAYIR"];
+    IndirimUygula -> BitirIndirim;
+    KodGecersiz -> BitirIndirim;
+
+    BitirIndirim -> KargoHesaplama;
+    KargoHesaplama -> AdresAl -> KargoSecenekleri -> KargoSecimi -> KargoEkle -> BitirKargo;
+
+    BitirKargo -> OdemeAsamasi;
+    OdemeAsamasi -> OdemeYontemi;
+    OdemeYontemi -> KartBilgisi;
+    KartBilgisi -> KartGecerli;
+    KartGecerli -> KartOdeme [label="EVET"];
+    KartGecerli -> KartHatali [label="HAYIR"];
+    KartOdeme -> OdemeBasarili;
+    OdemeBasarili -> SiparisOlustur [label="EVET"];
+    OdemeBasarili -> OdemeBasarisiz [label="HAYIR"];
+    SiparisOlustur -> OnayMail -> BitirOdeme;
+    KartHatali -> BitirOdeme;
+    OdemeBasarisiz -> BitirOdeme;
+
+    BitirOdeme -> SiparisTakip;
+    SiparisTakip -> DurumHazirlaniyor -> KargoTakip -> BitirTakip;
