@@ -1,4 +1,5 @@
-
+Öğrence No:250541008
+Adı-Soyadı:Cumali Bilgiç
 
 sistemin kısa açıklaması (maks. 5-6 satır)
 
