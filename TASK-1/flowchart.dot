@@ -1,0 +1,63 @@
+digraph ATM {
+    rankdir=TB;
+    node [shape=oval, style=filled, fillcolor=lightgreen];
+
+    start [label="BAŞLA"];
+    end [label="BİTİR"];
+
+    node [shape=parallelogram, style=filled, fillcolor=lightblue];
+    pin_input [label="OKU PIN"];
+    write_wrong_pin [label="YAZ 'Hatalı PIN\nKalan hak: pin_hak'"];
+    write_blocked [label="YAZ 'Kart bloke edildi'"];
+    amount_input [label="OKU çekilecek_tutar"];
+    write_invalid_amount [label="YAZ '20 TL katı giriniz'"];
+    write_insufficient_balance [label="YAZ 'Yetersiz bakiye'"];
+    write_limit_exceeded [label="YAZ 'Günlük limit aşıldı'"];
+    write_success [label="YAZ 'İşlem başarılı\nYeni bakiye ve limit'"];
+    repeat_input [label="OKU işlem_tekrar"];
+    write_goodbye [label="YAZ 'İyi günler'"];
+
+    node [shape=box, style=filled, fillcolor=lightyellow];
+    init_vars [label="GÜNLÜK_LIMIT ← 2000\nPIN ← 1234\nbakiye ← 5000\nkalan_limit ← GÜNLÜK_LIMIT\npin_hak ← 3"];
+    dec_pin_hak [label="pin_hak ← pin_hak - 1"];
+    update_balance [label="bakiye ← bakiye - çekilecek_tutar\nkalan_limit ← kalan_limit - çekilecek_tutar"];
+
+    node [shape=diamond, style=filled, fillcolor=lightpink];
+    pin_check [label="girilen_pin = PIN?"];
+    pin_hak_check [label="pin_hak = 0?"];
+    amount_mod_check [label="çekilecek_tutar % 20 = 0?"];
+    balance_check [label="çekilecek_tutar > bakiye?"];
+    limit_check [label="çekilecek_tutar > kalan_limit?"];
+    repeat_check [label="işlem_tekrar = 'E' veya 'e'?"];
+
+    // Flow
+    start -> init_vars -> pin_input;
+    pin_input -> pin_check;
+
+    pin_check -> amount_input [label="EVET"];
+    pin_check -> dec_pin_hak [label="HAYIR"];
+    dec_pin_hak -> write_wrong_pin -> pin_hak_check;
+    pin_hak_check -> pin_input [label="HAYIR"];
+    pin_hak_check -> write_blocked [label="EVET"];
+    write_blocked -> end;
+
+    amount_input -> amount_mod_check;
+    amount_mod_check -> write_invalid_amount [label="HAYIR"];
+    write_invalid_amount -> repeat_input;
+
+    amount_mod_check -> balance_check [label="EVET"];
+    balance_check -> write_insufficient_balance [label="EVET"];
+    write_insufficient_balance -> repeat_input;
+
+    balance_check -> limit_check [label="HAYIR"];
+    limit_check -> write_limit_exceeded [label="EVET"];
+    write_limit_exceeded -> repeat_input;
+
+    limit_check -> update_balance [label="HAYIR"];
+    update_balance -> write_success -> repeat_input;
+
+    repeat_input -> repeat_check;
+    repeat_check -> pin_input [label="EVET"];
+    repeat_check -> write_goodbye [label="HAYIR"];
+    write_goodbye -> end;
+}
