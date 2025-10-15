@@ -1,0 +1,92 @@
+digraph E_Ticaret_Sepet_Odeme {
+    rankdir=TB;
+    node [shape=box, style=filled, fillcolor=lightgray];
+
+    KullaniciGirisi [label="BAŞLA: Kullanıcı Girişi"];
+    GirisKontrol [label="EGER kullanıcı giriş yaptı"];
+    SepetOlustur [label="Yeni sepet oluştur"];
+    YonlendirGiris [label="Giriş/Kayıt sayfasına yönlendir"];
+    BitirGiris [label="BITIR: Kullanıcı Girişi"];
+
+    UrunEkleme [label="BAŞLA: Ürün Ekleme"];
+    StokKontrol [label="EGER ürün stok > 0"];
+    SepeteEkle [label="Ürünü sepete ekle"];
+    StokYok [label="Göster: Ürün stokta yok"];
+    BitirEkleme [label="BITIR: Ürün Ekleme"];
+
+    SepetYonetimi [label="BAŞLA: Sepet Yönetimi"];
+    DonguSepet [label="DONGU: Sepetteki ürünler"];
+    AdetDegisimi [label="EGER kullanıcı adet değiştirirse"];
+    AdetGuncelle [label="Adeti güncelle"];
+    UrunSilme [label="EGER kullanıcı ürün silerse"];
+    UrunSil [label="Ürünü sepetten sil"];
+    ToplamHesapla [label="Toplam tutarı hesapla"];
+    BitirSepet [label="BITIR: Sepet Yönetimi"];
+
+    IndirimKodu [label="BAŞLA: İndirim Kodu"];
+    KodGirildi [label="EGER kullanıcı indirim kodu girerse"];
+    KodGecerli [label="EGER kod geçerli"];
+    IndirimUygula [label="İndirim hesapla ve uygula"];
+    KodGecersiz [label="Göster: Kod geçersiz"];
+    BitirIndirim [label="BITIR: İndirim Kodu"];
+
+    KargoHesaplama [label="BAŞLA: Kargo Hesaplama"];
+    AdresAl [label="Teslimat adresini al"];
+    KargoSecenekleri [label="Kargo seçeneklerini hesapla"];
+    KargoSecimi [label="Kullanıcı kargo seçimi"];
+    KargoEkle [label="Kargo ücretini toplam tutara ekle"];
+    BitirKargo [label="BITIR: Kargo Hesaplama"];
+
+    OdemeAsamasi [label="BAŞLA: Ödeme Aşaması"];
+    OdemeYontemi [label="Kullanıcı ödeme yöntemi seçimi"];
+    KartBilgisi [label="EGER kredi kartı seçildiyse"];
+    KartGecerli [label="EGER kart bilgileri geçerli"];
+    KartOdeme [label="Kartla ödeme işlemi"];
+    KartHatali [label="Göster: Kart bilgileri geçersiz"];
+    OdemeBasarili [label="EGER ödeme başarılı"];
+    SiparisOlustur [label="Sipariş oluştur"];
+    OnayMail [label="Onay e-postası gönder"];
+    OdemeBasarisiz [label="Göster: Ödeme başarısız"];
+    BitirOdeme [label="BITIR: Ödeme Aşaması"];
+
+    SiparisTakip [label="BAŞLA: Sipariş Takibi"];
+    DurumHazirlaniyor [label="Sipariş durumu: Hazırlanıyor"];
+    KargoTakip [label="Kargo takip numarası oluştur"];
+    BitirTakip [label="BITIR: Sipariş Takibi"];
+
+    // Bağlantılar
+    KullaniciGirisi -> GirisKontrol;
+    GirisKontrol -> SepetOlustur [label="EVET"];
+    GirisKontrol -> YonlendirGiris [label="HAYIR"];
+    SepetOlustur -> BitirGiris;
+    YonlendirGiris -> BitirGiris;
+
+    BitirGiris -> UrunEkleme;
+    UrunEkleme -> StokKontrol;
+    StokKontrol -> SepeteEkle [label="EVET"];
+    StokKontrol -> StokYok [label="HAYIR"];
+    SepeteEkle -> BitirEkleme;
+    StokYok -> BitirEkleme;
+
+    BitirEkleme -> SepetYonetimi;
+    SepetYonetimi -> DonguSepet;
+    DonguSepet -> AdetDegisimi;
+    AdetDegisimi -> AdetGuncelle [label="EVET"];
+    AdetDegisimi -> UrunSilme [label="HAYIR"];
+    UrunSilme -> UrunSil [label="EVET"];
+    UrunSilme -> ToplamHesapla [label="HAYIR"];
+    UrunSil -> ToplamHesapla;
+    AdetGuncelle -> UrunSilme;
+    ToplamHesapla -> BitirSepet;
+
+    BitirSepet -> IndirimKodu;
+    IndirimKodu -> KodGirildi;
+    KodGirildi -> KodGecerli [label="EVET"];
+    KodGirildi -> BitirIndirim [label="HAYIR"];
+    KodGecerli -> IndirimUygula [label="EVET"];
+    KodGecerli -> KodGecersiz [label="HAYIR"];
+    IndirimUygula -> BitirIndirim;
+    KodGecersiz -> BitirIndirim;
+
+    BitirIndirim -> KargoHesaplama;
+    KargoHesap
