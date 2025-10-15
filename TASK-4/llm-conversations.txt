@@ -1,0 +1,145 @@
+3. Pseudocode (Sözde Kod) Oluşturma
+Tüm bu kontrolleri ve sistem akışını içeren detaylı sözde kod aşağıdadır. Bu kod, iç içe EĞER-İSE (IF-ELSE) yapıları ve döngüler kullanılarak oluşturulmuştur.
+
+Plaintext
+
+BAŞLA
+  // 1. Öğrenci Girişi
+  GİRİŞ YAP (öğrenciNo, şifre)
+  EĞER girişBaşarısız İSE
+    HATA GÖSTER("Geçersiz öğrenci no veya şifre.")
+    ÇIKIŞ
+  SON-EĞER
+
+  // 2. Ders Seçim Döngüsü
+  seçilenDerslerListesi = []
+  toplamKredi = 0
+  DEVAM_ET = EVET
+
+  DÖNGÜ (DEVAM_ET == EVET)
+    DERS LİSTESİNİ GÖSTER()
+    seçilenDers = KULLANICIDAN DERS AL()
+
+    // 3. Kontrol Mekanizmaları
+    kontenjanUygun = KONTENJAN_KONTROLÜ(seçilenDers)
+    önKoşulUygun = ÖNKOŞUL_KONTROLÜ(öğrenciNo, seçilenDers)
+    zamanÇakışmasıYok = ZAMAN_ÇAKIŞMASI_KONTROLÜ(seçilenDers, seçilenDerslerListesi)
+    krediLimitiAşılmadı = KREDİ_LİMİTİ_KONTROLÜ(toplamKredi, seçilenDers.kredi, 35)
+
+    EĞER (kontenjanUygun VE önKoşulUygun VE zamanÇakışmasıYok VE krediLimitiAşılmadı) İSE
+      seçilenDerslerListesi.EKLE(seçilenDers)
+      toplamKredi = toplamKredi + seçilenDers.kredi
+      BİLGİ VER("Ders başarıyla eklendi.")
+    DEĞİLSE
+      EĞER !kontenjanUygun İSE HATA GÖSTER("Ders kontenjanı dolu.")
+      EĞER !önKoşulUygun İSE HATA GÖSTER("Ön koşul dersi sağlanmıyor.")
+      EĞER !zamanÇakışmasıYok İSE HATA GÖSTER("Ders saatleri çakışıyor.")
+      EĞER !krediLimitiAşılmadı İSE HATA GÖSTER("Maksimum kredi limitini aşıyorsunuz.")
+    SON-EĞER
+
+    kullanıcıCevabı = SOR("Başka ders eklemek istiyor musunuz? (E/H)")
+    EĞER kullanıcıCevabı == 'H' İSE
+      DEVAM_ET = HAYIR
+    SON-EĞER
+  SON-DÖNGÜ
+
+  // 4. Danışman Onayı ve Kayıt Onaylama
+  danışmanOnayıGerekli = HAYIR
+  öğrenciGPA = GPA_GETİR(öğrenciNo)
+  EĞER öğrenciGPA < 2.5 İSE
+    danışmanOnayıGerekli = EVET
+  SON-EĞER
+
+  KAYIT ÖZETİNİ GÖSTER(seçilenDerslerListesi, toplamKredi, danışmanOnayıGerekli)
+  onay = KULLANICIDAN ONAY AL("Kaydı tamamlamak istiyor musunuz? (E/H)")
+
+  EĞER onay == 'E' İSE
+    EĞER danışmanOnayıGerekli İSE
+      KAYDI ONAYA GÖNDER()
+      BİLGİ VER("Kayıt işleminiz danışman onayına gönderilmiştir.")
+    DEĞİLSE
+      KAYDI TAMAMLA()
+      BİLGİ VER("Ders kaydınız başarıyla tamamlanmıştır.")
+    SON-EĞER
+  DEĞİLSE
+    KAYDI İPTAL ET()
+    BİLGİ VER("Kayıt işlemi iptal edildi.")
+  SON-EĞER
+SON
+4. DOT Dönüşümü
+Yukarıdaki sözde kodun Graphviz DOT diline çevrilmiş hali aşağıdadır. Bu kod, bir akış diyagramı (flowchart) oluşturmak için kullanılabilir. Talep edildiği gibi, her kontrol noktası (karar anı) diamond (baklava) şekli ile gösterilmiştir.
+
+Kod snippet'i
+
+digraph DersKayitSistemi {
+    rankdir=TB; // Akışı yukarıdan aşağıya ayarla
+    node [shape=box, style=rounded, fontname="Helvetica"];
+    edge [fontname="Helvetica"];
+
+    // Başlangıç ve Giriş
+    Start [label="Başla", shape=ellipse];
+    Login [label="Öğrenci Girişi"];
+    LoginCheck [label="Giriş Başarılı mı?", shape=diamond];
+    
+    // Ders Seçim Döngüsü
+    DisplayCourses [label="Ders Listesini Görüntüle"];
+    SelectCourse [label="Ders Seç"];
+    
+    // Kontrol Noktaları (Diamond)
+    QuotaCheck [label="Kontenjan Var mı?", shape=diamond];
+    PrereqCheck [label="Ön Koşul Tamam mı?", shape=diamond];
+    ConflictCheck [label="Zaman Çakışması Var mı?", shape=diamond];
+    CreditCheck [label="Kredi Limiti (<=35) Aşıldı mı?", shape=diamond];
+    
+    // Aksiyonlar ve Döngü Kararı
+    AddCourse [label="Dersi Geçici Listeye Ekle"];
+    ShowError [label="Hata Mesajı Göster"];
+    MoreCourses [label="Başka Ders Eklenecek mi?", shape=diamond];
+    
+    // Sonlandırma
+    ShowSummary [label="Kayıt Özetini Göster"];
+    ConfirmRegistration [label="Kullanıcı Kaydı Onaylıyor mu?", shape=diamond];
+    GPACheck [label="GPA < 2.5 mi?", shape=diamond];
+    SendToAdvisor [label="Kayıt Danışman Onayına Gönderilir"];
+    CompleteRegistration [label="Kayıt Tamamlandı"];
+    CancelRegistration [label="Kayıt İptal Edildi"];
+    End [label="Son", shape=ellipse];
+
+    // --- Akış Yönleri ---
+    Start -> Login;
+    Login -> LoginCheck;
+    LoginCheck -> DisplayCourses [label="Evet"];
+    LoginCheck -> End [label="Hayır"];
+
+    DisplayCourses -> SelectCourse;
+    SelectCourse -> QuotaCheck;
+
+    QuotaCheck -> PrereqCheck [label="Evet"];
+    QuotaCheck -> ShowError [label="Hayır (Dolu)"];
+
+    PrereqCheck -> ConflictCheck [label="Evet"];
+    PrereqCheck -> ShowError [label="Hayır (Eksik)"];
+    
+    ConflictCheck -> CreditCheck [label="Hayır"];
+    ConflictCheck -> ShowError [label="Evet (Çakışma Var)"];
+    
+    CreditCheck -> AddCourse [label="Hayır"];
+    CreditCheck -> ShowError [label="Evet (Aşılıyor)"];
+
+    AddCourse -> MoreCourses;
+    ShowError -> MoreCourses;
+
+    MoreCourses -> DisplayCourses [label="Evet"];
+    MoreCourses -> ShowSummary [label="Hayır"];
+
+    ShowSummary -> ConfirmRegistration;
+    ConfirmRegistration -> GPACheck [label="Evet"];
+    ConfirmRegistration -> CancelRegistration [label="Hayır"];
+
+    GPACheck -> SendToAdvisor [label="Evet"];
+    GPACheck -> CompleteRegistration [label="Hayır"];
+    
+    SendToAdvisor -> End;
+    CompleteRegistration -> End;
+    CancelRegistration -> End;
+}
