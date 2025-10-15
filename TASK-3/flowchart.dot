@@ -1,0 +1,56 @@
+digraph HospitalSystem {
+    rankdir=LR;
+    node [shape=box];
+
+    Start -> AuthCheck;
+    AuthCheck -> AuthFail [label="Başarısız"];
+    AuthCheck -> ServiceSelect [label="Başarılı"];
+
+    AuthFail [shape=ellipse, label="Kimlik doğrulama başarısız\nSistemden çık"];
+    
+    ServiceSelect -> RandevuAkışı [label="Randevu Sistemi"];
+    ServiceSelect -> TahlilAkışı [label="Tahlil Sonucu"];
+
+    // Randevu Süreci
+    RandevuAkışı -> PoliklinikSec;
+    PoliklinikSec -> DoktorSec;
+    DoktorSec -> SaatSec;
+    SaatSec -> RandevuOnay;
+    RandevuOnay -> RandevuKaydet [label="Onaylandı"];
+    RandevuOnay -> RandevuIptal [label="İptal"];
+
+    RandevuKaydet -> SMSGonder;
+    SMSGonder -> RandevuBitir;
+
+    RandevuIptal [shape=ellipse, label="Randevu iptal edildi"];
+    RandevuBitir [shape=ellipse, label="Randevu tamamlandı"];
+
+    // Tahlil Süreci
+    TahlilAkışı -> TahlilVarmi;
+    TahlilVarmi -> TahlilYok [label="Yok"];
+    TahlilVarmi -> SonucHazirMi [label="Var"];
+
+    TahlilYok [shape=ellipse, label="Tahlil kaydı bulunamadı"];
+
+    SonucHazirMi -> SonucHazirDegil [label="Hazır değil"];
+    SonucHazirMi -> SonucGoster [label="Hazır"];
+
+    SonucHazirDegil [shape=ellipse, label="Sonuçlar hazır değil"];
+
+    SonucGoster -> PDFSecimi;
+    PDFSecimi -> PDFIndir [label="İndir"];
+    PDFSecimi -> IndirmeIptal [label="İptal"];
+
+    PDFIndir [shape=ellipse, label="PDF indirildi"];
+    IndirmeIptal [shape=ellipse, label="İndirme iptal edildi"];
+
+    // Genel bitiş
+    RandevuBitir -> End;
+    RandevuIptal -> End;
+    TahlilYok -> End;
+    SonucHazirDegil -> End;
+    PDFIndir -> End;
+    IndirmeIptal -> End;
+
+    End [shape=doublecircle, label="Sistemden çık"]
+}
