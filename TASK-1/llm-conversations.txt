@@ -1,0 +1,142 @@
+ATM para çekme sistemi için detaylı pseudocode yazmanı istiyorum. Şunları içermeli: PIN doğrulama (3 hak), bakiye kontrolü, tutar kontrolü (20 TL katları), günlük limit kontrolü, işlem tekrarı seçeneği. Tüm adımları BAŞLA, OKU, YAZ, EGER-İSE, DÖNGÜA yapılarıyla yaz
+Elbette! İşte ATM para çekme sistemi için detaylı bir pseudocode. Türkçe yapılarla ve senin belirttiğin adımları kullanarak yazdım:
+
+🏧 ATM Para Çekme Sistemi – Pseudocode
+plaintext
+BAŞLA
+
+    // Sabitler ve başlangıç değerleri
+    GÜNLÜK_LIMIT ← 2000
+    PIN ← 1234
+    bakiye ← 5000
+    kalan_limit ← GÜNLÜK_LIMIT
+    pin_hak ← 3
+    işlem_tekrar ← "E"
+
+    DÖNGÜA işlem_tekrar = "E" VEYA işlem_tekrar = "e" İSE
+
+        // PIN doğrulama
+        DÖNGÜA pin_hak > 0 İSE
+            YAZ "Lütfen PIN kodunuzu giriniz:"
+            OKU girilen_pin
+
+            EGER girilen_pin = PIN İSE
+                ÇIK PIN doğrulama döngüsünden
+            DEĞİLSE
+                pin_hak ← pin_hak - 1
+                YAZ "Hatalı PIN. Kalan deneme hakkı: ", pin_hak
+            SON
+        SON
+
+        EGER pin_hak = 0 İSE
+            YAZ "3 kez hatalı PIN girildi. Kart bloke edildi."
+            ÇIK ANA döngüden
+        SON
+
+        // Tutar girme ve kontroller
+        YAZ "Çekmek istediğiniz tutarı giriniz (20 TL katı):"
+        OKU çekilecek_tutar
+
+        EGER çekilecek_tutar MOD 20 ≠ 0 İSE
+            YAZ "Hatalı tutar. Lütfen 20 TL'nin katı bir tutar giriniz."
+        DEĞİLSE
+            EGER çekilecek_tutar > bakiye İSE
+                YAZ "Yetersiz bakiye. Mevcut bakiye: ", bakiye
+            DEĞİLSE
+                EGER çekilecek_tutar > kalan_limit İSE
+                    YAZ "Günlük limit aşıldı. Kalan günlük limit: ", kalan_limit
+                DEĞİLSE
+                    bakiye ← bakiye - çekilecek_tutar
+                    kalan_limit ← kalan_limit - çekilecek_tutar
+                    YAZ "İşlem başarılı. Yeni bakiye: ", bakiye
+                    YAZ "Kalan günlük limit: ", kalan_limit
+                SON
+            SON
+        SON
+
+        // İşlem tekrarı
+        YAZ "Başka bir işlem yapmak ister misiniz? (E/H)"
+        OKU işlem_tekrar
+
+    SON
+
+YAZ "İyi günler! ATM'den çıkılıyor..."
+
+BİTİR
+Bu yapı, ATM'de para çekme işlemini tüm kontrollerle birlikte simüle eder: PIN doğrulama, bakiye ve limit kontrolü, tutar geçerliliği ve işlem tekrarı. İstersen bu yapıyı bir programlama diline çevirmemde de yardımcı olabilirim. Hangi dilde görmek istersin?
+
+Bu pseudocode’u Graphviz DOT diline çevir. Başla/Bitir için oval, girdi/çıktı için parallelogram, işlem için box, karar için diamond kullan. Tüm okları ve etiketleri ekle.
+İşte verdiğin ATM para çekme sistemine ait pseudocode’un Graphviz DOT diline çevrilmiş hali. Bu tanımda:
+
+🟢 Oval şekiller: Başla/Bitir
+
+🟦 Paralelkenar: Girdi/Çıktı (OKU/YAZ)
+
+🟨 Dikdörtgen: İşlem (örneğin değişken atamaları)
+
+🔷 Elmas: Karar (EĞER-İSE)
+
+dot
+digraph ATM {
+    rankdir=TB;
+    node [shape=oval, style=filled, fillcolor=lightgreen];
+
+    start [label="BAŞLA"];
+    end [label="BİTİR"];
+
+    node [shape=parallelogram, style=filled, fillcolor=lightblue];
+    pin_input [label="OKU PIN"];
+    write_wrong_pin [label="YAZ 'Hatalı PIN\nKalan hak: pin_hak'"];
+    write_blocked [label="YAZ 'Kart bloke edildi'"];
+    amount_input [label="OKU çekilecek_tutar"];
+    write_invalid_amount [label="YAZ '20 TL katı giriniz'"];
+    write_insufficient_balance [label="YAZ 'Yetersiz bakiye'"];
+    write_limit_exceeded [label="YAZ 'Günlük limit aşıldı'"];
+    write_success [label="YAZ 'İşlem başarılı\nYeni bakiye ve limit'"];
+    repeat_input [label="OKU işlem_tekrar"];
+    write_goodbye [label="YAZ 'İyi günler'"];
+
+    node [shape=box, style=filled, fillcolor=lightyellow];
+    init_vars [label="GÜNLÜK_LIMIT ← 2000\nPIN ← 1234\nbakiye ← 5000\nkalan_limit ← GÜNLÜK_LIMIT\npin_hak ← 3"];
+    dec_pin_hak [label="pin_hak ← pin_hak - 1"];
+    update_balance [label="bakiye ← bakiye - çekilecek_tutar\nkalan_limit ← kalan_limit - çekilecek_tutar"];
+
+    node [shape=diamond, style=filled, fillcolor=lightpink];
+    pin_check [label="girilen_pin = PIN?"];
+    pin_hak_check [label="pin_hak = 0?"];
+    amount_mod_check [label="çekilecek_tutar % 20 = 0?"];
+    balance_check [label="çekilecek_tutar > bakiye?"];
+    limit_check [label="çekilecek_tutar > kalan_limit?"];
+    repeat_check [label="işlem_tekrar = 'E' veya 'e'?"];
+
+    // Flow
+    start -> init_vars -> pin_input;
+    pin_input -> pin_check;
+
+    pin_check -> amount_input [label="EVET"];
+    pin_check -> dec_pin_hak [label="HAYIR"];
+    dec_pin_hak -> write_wrong_pin -> pin_hak_check;
+    pin_hak_check -> pin_input [label="HAYIR"];
+    pin_hak_check -> write_blocked [label="EVET"];
+    write_blocked -> end;
+
+    amount_input -> amount_mod_check;
+    amount_mod_check -> write_invalid_amount [label="HAYIR"];
+    write_invalid_amount -> repeat_input;
+
+    amount_mod_check -> balance_check [label="EVET"];
+    balance_check -> write_insufficient_balance [label="EVET"];
+    write_insufficient_balance -> repeat_input;
+
+    balance_check -> limit_check [label="HAYIR"];
+    limit_check -> write_limit_exceeded [label="EVET"];
+    write_limit_exceeded -> repeat_input;
+
+    limit_check -> update_balance [label="HAYIR"];
+    update_balance -> write_success -> repeat_input;
+
+    repeat_input -> repeat_check;
+    repeat_check -> pin_input [label="EVET"];
+    repeat_check -> write_goodbye [label="HAYIR"];
+    write_goodbye -> end;
+}
